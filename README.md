@@ -188,15 +188,9 @@ After running the script, you'll have:
 - **Average Ratings per User**: ~1.2
 - **Average Ratings per Product**: ~22.3
 
-## 🎓 Evaluation Criteria
+ 
 
-### Milestone 1: Data Preparation ✅
-- ✅ Clean and structured datasets ready for training
-- ✅ User-item matrix created successfully
-
-## 🤝 Contributing
-
-This is an internship project. For questions or suggestions, please open an issue.
+ 
 
 ## 📄 License
 
