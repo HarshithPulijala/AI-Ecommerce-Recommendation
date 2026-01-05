@@ -1,0 +1,221 @@
+# AI-Enabled Recommendation Engine for E-commerce Platform
+
+A machine learning-based recommendation system that provides personalized product recommendations to users based on their interaction history and product metadata.
+
+## 📋 Project Overview
+
+This project implements a comprehensive recommendation engine for an e-commerce platform using Amazon Reviews 2023 dataset. The system processes user interactions, product metadata, and builds recommendation models to suggest relevant products to users.
+
+## 🎯 Milestones
+
+### ✅ Milestone 1: Data Preparation (COMPLETED)
+- Data collection and cleaning
+- Handling data inconsistencies
+- Building user-item interaction matrix
+- Dataset: Amazon Reviews 2023 - Appliances Category
+  - 2.1M ratings
+  - 1.7M users
+  - 94K products
+
+### 🚧 Milestone 2: Model Development (In Progress)
+- Implementation of recommendation algorithms
+- Model training and optimization
+- Performance evaluation
+
+## 📁 Project Structure
+
+```
+AI -ecommerce/
+├── data/
+│   ├── raw/              # Raw input data (CSV files)
+│   └── processed/        # Cleaned and processed data
+│       ├── users_clean.csv
+│       ├── products_clean.csv
+│       ├── interactions_clean.csv
+│       └── user_item_matrix.csv
+├── src/
+│   ├── data_preparation.py      # Main data cleaning script
+│   └── preprocess_amazon_data.py  # JSONL to CSV converter
+├── notebooks/            # Jupyter notebooks for analysis
+└── README.md
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.8 or higher
+- Required packages:
+  ```bash
+  pip install pandas numpy
+  ```
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/AI-ecommerce-recommendation-engine.git
+   cd AI-ecommerce-recommendation-engine
+   ```
+
+2. Download the dataset:
+   - Go to [Amazon Reviews 2023](https://amazon-reviews-2023.github.io/)
+   - Download Appliances category:
+     - Review file: `Appliances.jsonl.gz`
+     - Metadata file: `meta_Appliances.jsonl.gz`
+   - Extract and place in `data/raw/` directory
+
+3. Run data preprocessing (if needed):
+   ```bash
+   python src/preprocess_amazon_data.py
+   ```
+
+4. Run data preparation:
+   ```bash
+   python src/data_preparation.py
+   ```
+
+## 📊 Dataset Information
+
+### Source
+- **Dataset**: Amazon Reviews 2023
+- **Category**: Appliances
+- **Total Reviews**: 2,105,948
+- **Users**: 1,755,732
+- **Products**: 94,327
+
+### Data Files
+
+#### Raw Data (`data/raw/`)
+- `users.csv` - User information
+- `products.csv` - Product metadata (category, brand, price, description)
+- `interactions.csv` - User-product interactions with ratings
+
+#### Processed Data (`data/processed/`)
+- `users_clean.csv` - Cleaned user data
+- `products_clean.csv` - Cleaned product data with imputed missing values
+- `interactions_clean.csv` - Cleaned interactions with valid ratings (1-5)
+- `user_item_matrix.csv` - User-item interaction matrix (sparse coordinate format)
+
+## 🔧 Data Processing
+
+### Data Cleaning Steps
+
+1. **Missing Value Handling**
+   - Removed rows with missing critical IDs
+   - Filled missing product descriptions with default string
+   - Imputed missing prices using median value
+
+2. **Data Validation**
+   - Removed invalid ratings (outside 1-5 range)
+   - Removed products with non-positive prices
+   - Removed duplicate entries
+
+3. **Referential Integrity**
+   - Ensured all interactions reference valid users and products
+   - Filtered out orphaned records
+
+4. **Matrix Creation**
+   - Built user-item interaction matrix
+   - Used sparse coordinate format for memory efficiency
+   - Matrix dimensions: 1,755,732 users × 94,327 products
+
+## 📈 Features
+
+- **Comprehensive Data Cleaning**: Handles missing values, duplicates, and data inconsistencies
+- **Referential Integrity**: Ensures data consistency across all datasets
+- **Memory Efficient**: Uses sparse matrix format for large datasets
+- **Scalable**: Handles millions of interactions efficiently
+- **Well Documented**: Clean, commented code for easy understanding
+
+## 🛠️ Usage
+
+### Data Preparation
+
+```python
+# Run the main data preparation script
+python src/data_preparation.py
+```
+
+This script will:
+1. Load raw datasets
+2. Clean and validate data
+3. Create user-item interaction matrix
+4. Save processed files to `data/processed/`
+
+### Output
+
+After running the script, you'll have:
+- Cleaned datasets ready for model training
+- User-item interaction matrix in sparse format
+- All data quality checks passed
+
+## 📝 Data Schema
+
+### Users
+- `user_id`: Unique user identifier
+- `age`: User age (if available)
+- `gender`: User gender (if available)
+- `location`: User location (if available)
+
+### Products
+- `product_id`: Unique product identifier
+- `category`: Product category
+- `brand`: Product brand
+- `price`: Product price (USD)
+- `description`: Product description
+
+### Interactions
+- `user_id`: User identifier
+- `product_id`: Product identifier
+- `rating`: Rating (1-5)
+- `timestamp`: Interaction timestamp
+
+## 🔬 Technical Details
+
+- **Language**: Python 3.8+
+- **Libraries**: pandas, numpy
+- **Data Format**: CSV files
+- **Matrix Format**: Sparse coordinate format (user_id, product_id, rating)
+- **Sparsity**: ~99.9987% (standard for recommendation systems)
+
+## 📊 Dataset Statistics
+
+- **Total Interactions**: 2,105,948
+- **Unique Users**: 1,755,732
+- **Unique Products**: 94,327
+- **Matrix Non-zero Entries**: 2,103,990
+- **Average Ratings per User**: ~1.2
+- **Average Ratings per Product**: ~22.3
+
+## 🎓 Evaluation Criteria
+
+### Milestone 1: Data Preparation ✅
+- ✅ Clean and structured datasets ready for training
+- ✅ User-item matrix created successfully
+
+## 🤝 Contributing
+
+This is an internship project. For questions or suggestions, please open an issue.
+
+## 📄 License
+
+This project is for educational purposes as part of an internship program.
+
+## 👤 Author
+
+Internship Project - AI-Enabled Recommendation Engine
+
+## 🙏 Acknowledgments
+
+- Amazon Reviews 2023 Dataset by McAuley Lab
+- Dataset source: https://amazon-reviews-2023.github.io/
+
+## 📞 Contact
+
+For questions about this project, please refer to the project documentation or open an issue on GitHub.
+
+---
+
+**Note**: Large data files (CSV files >100MB) are not included in the repository due to GitHub file size limits. Please download the dataset from the official source and place it in the `data/raw/` directory.
+
