@@ -257,22 +257,14 @@ After running the script, you'll have:
 
  
 
-## 📄 License
-
-This project is for educational purposes as part of an internship program.
-
-## 👤 Author
-
-Internship Project - AI-Enabled Recommendation Engine
+ 
 
 ## 🙏 Acknowledgments
 
 - Amazon Reviews 2023 Dataset by McAuley Lab
 - Dataset source: https://amazon-reviews-2023.github.io/
 
-## 📞 Contact
-
-For questions about this project, please refer to the project documentation or open an issue on GitHub.
+ 
 
 ---
 
