@@ -1,0 +1,39 @@
+# Configuration for E-commerce Recommendation System
+
+# SVD Model Configuration
+svd:
+  n_components: 50
+
+# Hybrid Model Weights
+hybrid:
+  collaborative_weight: 0.7
+  content_weight: 0.3
+  # Compute expensive content scores only for top-N collaborative candidates
+  # (keeps quality while making evaluation much faster)
+  content_eval_limit: 200
+
+# Recommendation Settings
+recommendation:
+  candidate_size: 1000
+  default_top_n: 10
+
+# Data Paths (relative to project root)
+data:
+  processed_dir: "data/processed"
+  models_dir: "models"
+
+# File Names
+files:
+  products_clean: "products_clean.csv"
+  interactions_clean: "interactions_clean.csv"
+  user_item_matrix: "user_item_matrix.csv"
+
+  # Model files
+  svd_model: "svd_model.pkl"
+  user_factors: "user_factors.pkl"
+  product_factors: "product_factors.pkl"
+  product_features: "product_features.pkl"
+  user_to_idx: "user_to_idx.pkl"
+  product_to_idx: "product_to_idx.pkl"
+  tfidf_vectorizer: "tfidf_vectorizer.pkl"
+  price_scaler: "price_scaler.pkl"

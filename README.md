@@ -17,10 +17,18 @@ This project implements a comprehensive recommendation engine for an e-commerce 
   - 1.7M users
   - 94K products
 
-### 🚧 Milestone 2: Model Development (In Progress)
-- Implementation of recommendation algorithms
-- Model training and optimization
-- Performance evaluation
+### ✅ Milestone 2: Model Development (COMPLETED - 18 Jan 2026)
+- Implementation of hybrid recommendation algorithms (Collaborative Filtering + Content-Based)
+- Model training and optimization using SVD and TF-IDF
+- Performance evaluation with MAE/RMSE metrics
+- Models saved and ready for deployment
+
+### ✅ Milestone 3: Evaluation and Refinement (COMPLETED - 28 Jan 2026)
+- Comprehensive model evaluation using Precision@K, Recall@K, and F1-score metrics
+- Hyperparameter tuning for SVD components and hybrid model weights
+- Model refinement for improved recommendation accuracy
+- Testing of different recommendation scenarios
+- Final tuned models with optimized performance
 
 ## 📁 Project Structure
 
@@ -32,10 +40,20 @@ AI -ecommerce/
 │       ├── users_clean.csv
 │       ├── products_clean.csv
 │       ├── interactions_clean.csv
-│       └── user_item_matrix.csv
+│       ├── user_item_matrix.csv
+│       └── model_evaluation_results.csv
+├── models/               # Trained model artifacts
+│   ├── svd_model.pkl
+│   ├── user_factors.pkl
+│   ├── product_factors.pkl
+│   └── ...
 ├── src/
 │   ├── data_preparation.py      # Main data cleaning script
+│   ├── model_training.py        # Model training and evaluation
+│   ├── recommend.py             # Recommendation inference engine
 │   └── preprocess_amazon_data.py  # JSONL to CSV converter
+├── config.yaml                  # Configuration file
+├── requirements.txt             # Python dependencies
 ├── notebooks/            # Jupyter notebooks for analysis
 └── README.md
 ```
@@ -45,10 +63,7 @@ AI -ecommerce/
 ### Prerequisites
 
 - Python 3.8 or higher
-- Required packages:
-  ```bash
-  pip install pandas numpy
-  ```
+- Required packages (see `requirements.txt`)
 
 ### Installation
 
@@ -56,6 +71,11 @@ AI -ecommerce/
    ```bash
    git clone https://github.com/YOUR_USERNAME/AI-ecommerce-recommendation-engine.git
    cd AI-ecommerce-recommendation-engine
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
    ```
 
 2. Download the dataset:
@@ -75,7 +95,52 @@ AI -ecommerce/
    python src/data_preparation.py
    ```
 
-## 📊 Dataset Information
+5. Train the recommendation models:
+   ```bash
+   python src/model_training.py
+   ```
+
+## 🎯 Generate Recommendations
+
+After training the models, you can generate personalized product recommendations:
+
+### Command Line Usage
+```bash
+# Generate recommendations for a specific user
+python src/recommend.py --user_id A123456789 --top_n 5
+
+# Include last viewed product for better recommendations
+python src/recommend.py --user_id A123456789 --last_viewed B0123456789 --top_n 10
+```
+
+### Python API Usage
+```python
+from src.recommend import recommend_products
+
+# Load models and generate recommendations
+recommendations = recommend_products(
+    user_id="A123456789",
+    last_viewed_product_id="B0123456789",  # Optional
+    top_n=5
+)
+
+# Display results
+for idx, row in recommendations.iterrows():
+    print(f"{idx+1}. {row['title'][:50]}...")
+    print(f"   Predicted Rating: {row['predicted_rating']:.2f}/5.0")
+    print(f"   Price: ${row['price']:.2f}")
+    print()
+```
+
+### Recommendation Types
+- **Collaborative Filtering**: Based on similar users' preferences
+- **Content-Based**: Based on product features and user history
+- **Hybrid**: Combines both approaches (recommended)
+
+### Cold-Start Handling
+- **New Users**: Returns popular products
+- **New Products**: Uses content-based similarity
+- **Missing Data**: Graceful fallback to available methods
 
 ### Source
 - **Dataset**: Amazon Reviews 2023
