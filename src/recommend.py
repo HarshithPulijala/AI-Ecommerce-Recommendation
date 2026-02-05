@@ -62,7 +62,7 @@ class RecommendationEngine:
         models_dir = Path(self.config['data']['models_dir'])
         
         # Check if running on Render (memory-constrained environment)
-        is_render = os.environ.get('RENDER') is not None
+        is_render = os.environ.get('RENDER') is not None or os.environ.get('RENDER_INSTANCE_ID') is not None
 
         # Load products with minimal columns and memory-efficient dtypes
         self.products_df = pd.read_csv(
@@ -78,14 +78,15 @@ class RecommendationEngine:
             dtype={'user_id': 'category', 'product_id': 'category', 'rating': 'float32'}
         )
         
-        # On Render: sample interactions to fit memory limit (512 MB)
+        # On Render: sample interactions more aggressively to fit memory limit (512 MB)
         if is_render:
-            # Keep 75% of interactions to reduce memory from ~239 MB to ~180 MB
-            sample_size = int(len(interactions_full) * 0.75)
+            # Keep 50% of interactions to reduce memory from ~239 MB to ~120 MB
+            sample_size = int(len(interactions_full) * 0.50)
             self.interactions_df = interactions_full.sample(n=sample_size, random_state=42).reset_index(drop=True)
-            print(f"Sampled {sample_size:,} interactions (75%) for memory efficiency")
+            print(f"Render mode: Sampled {sample_size:,} interactions (50%) for memory efficiency")
         else:
             self.interactions_df = interactions_full
+            print(f"Full dataset mode: Loaded {len(interactions_full):,} interactions")
 
         # Load mappings
         with open(models_dir / self.config['files']['user_to_idx'], 'rb') as f:
@@ -124,7 +125,7 @@ class RecommendationEngine:
         self._rebuild_popularity_cache()
 
         self.models_loaded = True
-        mem_mode = "Render (sampled 75%)" if is_render else "full dataset"
+        mem_mode = "Render (50% sampled)" if is_render else "full dataset"
         print(f"✓ Models loaded ({mem_mode}, float32, category dtypes)")
 
     def _rebuild_popularity_cache(self) -> None:
