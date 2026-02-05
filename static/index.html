@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Product Recommender</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🛍️ AI Product Recommender</h1>
+                <p>Personalized recommendations powered by machine learning</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="card">
+                    <h2>Get Recommendations</h2>
+                    
+                    <form id="recommendationForm" class="form">
+                        <!-- User ID Input -->
+                        <div class="form-group">
+                            <label for="userId">
+                                User ID <span class="required">*</span>
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="userId" 
+                                    name="userId" 
+                                    placeholder="Enter user ID (e.g., ATVPDKIKX0DER)"
+                                    required
+                                >
+                                <button type="button" id="loadSampleBtn" class="btn-secondary" title="Load a sample user">
+                                    Sample
+                                </button>
+                            </div>
+                            <small>Tip: Click 'Sample' to try a random user</small>
+                        </div>
+
+                        <!-- Number of Recommendations -->
+                        <div class="form-group">
+                            <label for="topN">
+                                Number of Recommendations
+                            </label>
+                            <div class="slider-wrapper">
+                                <input 
+                                    type="range" 
+                                    id="topN" 
+                                    name="topN" 
+                                    min="1" 
+                                    max="20" 
+                                    value="10"
+                                    class="slider"
+                                >
+                                <span id="topNValue" class="slider-value">10</span>
+                            </div>
+                        </div>
+
+                        <!-- Exclude Purchased -->
+                        <div class="form-group checkbox">
+                            <input 
+                                type="checkbox" 
+                                id="excludePurchased" 
+                                name="excludePurchased" 
+                                checked
+                            >
+                            <label for="excludePurchased">
+                                Exclude already purchased items
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn" class="btn-primary">
+                            Get Recommendations
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <!-- Status Messages -->
+                <div id="statusContainer"></div>
+
+                <!-- Recommendations Grid -->
+                <div id="recommendationsContainer" class="recommendations-container">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2026 AI-Powered E-commerce Recommendation Engine</p>
+                <div class="footer-links">
+                    <a href="#" id="apiStatusLink">API Status</a>
+                    <span>•</span>
+                    <a href="#" id="statsLink">System Stats</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- API Status Modal -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>System Status</h2>
+                <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
+            </div>
+            <div id="statusModalBody" class="modal-body">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>System Statistics</h2>
+                <button class="modal-close" onclick="closeModal('statsModal')">&times;</button>
+            </div>
+            <div id="statsModalBody" class="modal-body">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

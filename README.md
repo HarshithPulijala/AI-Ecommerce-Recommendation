@@ -30,6 +30,14 @@ This project implements a comprehensive recommendation engine for an e-commerce 
 - Testing of different recommendation scenarios
 - Final tuned models with optimized performance
 
+### ✅ Milestone 4: Web App Development & Deployment (COMPLETED - 5 Feb 2026)
+- Built Flask REST API backend with 6 functional endpoints
+- Created responsive web interface with HTML/CSS/JavaScript
+- Integrated recommendation engine with web application
+- Comprehensive test suite implemented
+- Deployment configuration for multiple platforms (Render.com, PythonAnywhere, AWS)
+- Production-ready with Gunicorn and Docker support
+
 ## 📁 Project Structure
 
 ```
@@ -100,7 +108,53 @@ AI -ecommerce/
    python src/model_training.py
    ```
 
-## 🎯 Generate Recommendations
+## � Web Application
+
+### Running the Web App Locally
+
+**Windows:**
+```bash
+launch.bat
+python -m flask run --port 5000
+# Visit: http://localhost:5000
+```
+
+**macOS/Linux:**
+```bash
+bash launch.sh
+python -m flask run --port 5000
+# Visit: http://localhost:5000
+```
+
+### Web App Features
+- 🎨 Modern, responsive user interface
+- ⚡ Real-time API integration
+- 📱 Mobile-friendly design
+- 🔍 Sample user suggestions
+- 📊 Product recommendations in grid layout
+- ✅ Input validation and error handling
+
+### API Endpoints
+- `GET /api/health` - System health check
+- `POST /api/recommend` - Get recommendations for a user
+- `GET /api/product/<id>` - Product details
+- `GET /api/users/sample` - Sample user IDs
+- `GET /api/stats` - System statistics
+
+### Testing the Web App
+```bash
+python test_webapp.py
+```
+
+### Deploying the Web App
+For production deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
+
+Supported platforms:
+- 🟢 **Render.com** (Recommended - Free tier available)
+- 🟡 **PythonAnywhere** (Simple Python hosting)
+- 🔵 **AWS EC2** (Full control, scalable)
+
+## �🎯 Generate Recommendations
 
 After training the models, you can generate personalized product recommendations:
 

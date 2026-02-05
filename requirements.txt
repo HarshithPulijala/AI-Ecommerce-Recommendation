@@ -12,6 +12,14 @@ scipy>=1.9.0
 # Configuration and utilities
 pyyaml>=6.0
 
+# Web Framework
+Flask>=2.3.0
+Flask-CORS>=4.0.0
+Werkzeug>=2.3.0
+
+# Production WSGI Server
+gunicorn>=20.1.0
+
 # Optional: For development and testing
 # pytest>=7.0.0
 # jupyter>=1.0.0
