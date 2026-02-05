@@ -55,11 +55,9 @@ Thumbs.db
 # Logs
 *.log
 
-# Model files (if large)
-*.pkl
-*.h5
-*.model
-models/
+# Model files are now tracked via Git LFS (see .gitattributes)
+# *.pkl - tracked by Git LFS
+# models/ - tracked by Git LFS
 
 # Temporary files
 *.tmp
