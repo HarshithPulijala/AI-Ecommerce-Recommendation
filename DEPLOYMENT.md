@@ -54,9 +54,11 @@ http://localhost:5000/
 5. Configure deployment:
    - **Name:** `recommendation-engine`
    - **Environment:** Python 3
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `gunicorn -w 4 -b 0.0.0.0:$PORT src.app:app`
+   - **Build Command:** `bash render-build.sh`
+   - **Start Command:** `gunicorn src.app:app --bind 0.0.0.0:$PORT`
    - **Plan:** Free tier (auto-suspend, upgrade later if needed)
+
+**IMPORTANT:** The build script `render-build.sh` automatically installs Git LFS and pulls the large CSV data files (316 MB) required for the recommendation engine.
 
 #### Step 3: Environment Variables
 Add in Render dashboard → Environment:
