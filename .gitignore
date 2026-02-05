@@ -34,11 +34,11 @@ wheels/
 *.swo
 *~
 
-# Large Data Files (DO NOT COMMIT - Too Large)
+# Large Data Files (using Git LFS for *.csv files in processed/)
 data/raw/*.jsonl
 data/raw/*.jsonl.gz
 data/raw/*.csv
-data/processed/*.csv
+# data/processed/*.csv is now tracked via Git LFS (see .gitattributes)
 
 # But keep the data directory structure
 !data/raw/.gitkeep
