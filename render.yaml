@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ai-ecommerce-recommendation
+    runtime: python
+    buildCommand: bash render-build.sh
+    startCommand: gunicorn src.app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.11
+      - key: FLASK_ENV
+        value: production
+    plan: free
