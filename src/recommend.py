@@ -50,19 +50,29 @@ class RecommendationEngine:
             return yaml.safe_load(f)
 
     def load_models(self) -> None:
-        """Load all trained models and data from disk"""
+        """Load all trained models and data from disk with memory optimization"""
         if self.models_loaded:
             return
 
-        print("Loading models and data...")
+        print("Loading models and data (memory-optimized)...")
 
         # Load configuration paths
         processed_dir = Path(self.config['data']['processed_dir'])
         models_dir = Path(self.config['data']['models_dir'])
 
-        # Load processed data
-        self.products_df = pd.read_csv(processed_dir / self.config['files']['products_clean'])
-        self.interactions_df = pd.read_csv(processed_dir / self.config['files']['interactions_clean'])
+        # Load products with minimal columns and memory-efficient dtypes
+        self.products_df = pd.read_csv(
+            processed_dir / self.config['files']['products_clean'],
+            usecols=['product_id', 'category', 'brand', 'price'],
+            dtype={'product_id': 'category', 'category': 'category', 'brand': 'category', 'price': 'float32'}
+        )
+        
+        # Load interactions with minimal columns
+        self.interactions_df = pd.read_csv(
+            processed_dir / self.config['files']['interactions_clean'],
+            usecols=['user_id', 'product_id', 'rating'],
+            dtype={'user_id': 'category', 'product_id': 'category', 'rating': 'float32'}
+        )
 
         # Load mappings
         with open(models_dir / self.config['files']['user_to_idx'], 'rb') as f:
@@ -73,14 +83,16 @@ class RecommendationEngine:
         # Load SVD model
         with open(models_dir / self.config['files']['svd_model'], 'rb') as f:
             self.svd_model = pickle.load(f)
+        
+        # Load factors as float32 to save memory
         with open(models_dir / self.config['files']['user_factors'], 'rb') as f:
-            self.user_factors = pickle.load(f)
+            self.user_factors = pickle.load(f).astype('float32')
         with open(models_dir / self.config['files']['product_factors'], 'rb') as f:
-            self.product_factors = pickle.load(f)
+            self.product_factors = pickle.load(f).astype('float32')
 
-        # Load content-based features
+        # Load content-based features as float32
         with open(models_dir / self.config['files']['product_features'], 'rb') as f:
-            self.product_features = pickle.load(f)
+            self.product_features = pickle.load(f).astype('float32')
         with open(models_dir / self.config['files']['tfidf_vectorizer'], 'rb') as f:
             self.tfidf_vectorizer = pickle.load(f)
         with open(models_dir / self.config['files']['price_scaler'], 'rb') as f:
@@ -99,7 +111,7 @@ class RecommendationEngine:
         self._rebuild_popularity_cache()
 
         self.models_loaded = True
-        print("Models and data loaded successfully!")
+        print(f"✓ Models loaded (Memory optimized: float32, category dtypes)")
 
     def _rebuild_popularity_cache(self) -> None:
         """Compute popular product ordering once (expensive groupby)."""

@@ -11,6 +11,7 @@ import logging
 import os
 import sys
 import random
+import gc
 from pathlib import Path
 from datetime import datetime
 
@@ -46,6 +47,10 @@ def initialize_engine():
         logger.info("Initializing recommendation engine...")
         recommendation_engine = get_engine()
         load_models()
+        
+        # Force garbage collection to free memory after loading
+        gc.collect()
+        
         models_status['loaded'] = True
         models_status['timestamp'] = datetime.now().isoformat()
         logger.info("✓ Recommendation engine initialized successfully")
