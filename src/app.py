@@ -394,6 +394,24 @@ def get_stats():
 # ==================== STATIC FILES ====================
 
 @app.route('/', methods=['GET'])
+def root():
+    """Root endpoint - confirms service is running"""
+    return jsonify({
+        'status': 'ok',
+        'message': 'AI E-commerce Recommendation API is running',
+        'version': '1.0',
+        'endpoints': {
+            'health': '/api/health',
+            'recommend': '/api/recommend (POST)',
+            'product': '/api/product/<id>',
+            'sample_users': '/api/users/sample',
+            'stats': '/api/stats',
+            'ui': '/ui'
+        }
+    }), 200
+
+
+@app.route('/ui', methods=['GET'])
 def serve_index():
     """Serve the main HTML page"""
     static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
