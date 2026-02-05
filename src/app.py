@@ -412,6 +412,7 @@ def root():
 
 
 @app.route('/ui', methods=['GET'])
+@app.route('/ui/', methods=['GET'])
 def serve_index():
     """Serve the main HTML page"""
     static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
