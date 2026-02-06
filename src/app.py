@@ -77,10 +77,12 @@ def initialize_engine():
 def ensure_initialized():
     """Ensure models are initialized, trigger loading if needed"""
     if not models_status['loaded'] and not models_status['loading']:
+        logger.info("Triggering lazy model initialization...")
         try:
             initialize_engine()
+            logger.info("Initialization completed")
         except Exception as e:
-            logger.error(f"Initialization failed: {str(e)}")
+            logger.error(f"Initialization failed in ensure_initialized: {str(e)}", exc_info=True)
 
 
 # ==================== API ENDPOINTS ====================
@@ -337,14 +339,15 @@ def get_sample_users():
     ensure_initialized()
     
     try:
-        limit = request.args.get('limit', 5, type=int)
-        limit = min(max(limit, 1), 20)  # Clamp between 1 and 20
-        
         if not models_status['loaded'] or recommendation_engine is None:
             return jsonify({
                 'success': False,
-                'error': 'Recommendation engine not ready'
+                'error': 'Recommendation engine not ready',
+                'models_status': models_status
             }), 503
+        
+        limit = request.args.get('limit', 5, type=int)
+        limit = min(max(limit, 1), 20)  # Clamp between 1 and 20
         
         # Get unique user IDs from interactions
         interactions_df = recommendation_engine.interactions_df
