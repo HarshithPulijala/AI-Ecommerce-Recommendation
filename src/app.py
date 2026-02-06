@@ -55,23 +55,19 @@ def initialize_engine():
         models_status['timestamp'] = datetime.now().isoformat()
         logger.info("✓ Recommendation engine initialized successfully")
     except Exception as e:
-        logger.error(f"Failed to initialize recommendation engine: {str(e)}")
+        logger.error(f"Failed to initialize recommendation engine: {str(e)}", exc_info=True)
         models_status['loaded'] = False
         models_status['error'] = str(e)
-        raise
 
 
-@app.before_request
-def ensure_engine():
-    """Ensure engine is loaded before processing requests"""
-    if not models_status['loaded'] and '/health' not in request.path:
+@app.before_first_request
+def startup_initialize():
+    """Load recommendation engine once on first request"""
+    if not models_status['loaded']:
         try:
             initialize_engine()
         except Exception as e:
-            return jsonify({
-                'error': 'Failed to load recommendation engine',
-                'details': str(e)
-            }), 500
+            logger.error(f"Startup initialization failed: {str(e)}")
 
 
 # ==================== API ENDPOINTS ====================
@@ -456,16 +452,11 @@ def internal_error(error):
 
 if __name__ == '__main__':
     try:
-        # Initialize engine before starting server
-        logger.info("App startup initiated")
-        initialize_engine()
-        
-        # Start Flask app
+        # Start Flask app (models will load on first request)
         port = int(os.environ.get('PORT', 5000))
         debug = os.environ.get('FLASK_ENV') == 'development'
         
         logger.info(f"Starting Flask app on port {port}")
-        logger.info("Flask server starting now...")
         
         # Keep the app running
         app.run(
