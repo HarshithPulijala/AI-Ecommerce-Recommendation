@@ -75,8 +75,12 @@ class RecommendationEngine:
             self.products_df = pd.read_csv(
                 products_file,
                 usecols=['product_id', 'category', 'brand', 'price'],
-                dtype={'product_id': 'category', 'category': 'category', 'brand': 'category', 'price': 'float32'}
+                dtype={'price': 'float32'}
             )
+            # Convert to category after loading to avoid categorical index issues
+            self.products_df['product_id'] = self.products_df['product_id'].astype('category')
+            self.products_df['category'] = self.products_df['category'].astype('category')
+            self.products_df['brand'] = self.products_df['brand'].astype('category')
             print(f"✓ Loaded products: {len(self.products_df)} rows")
         except Exception as e:
             print(f"✗ Failed to load products: {e}")
@@ -89,7 +93,7 @@ class RecommendationEngine:
             interactions_full = pd.read_csv(
                 interactions_file,
                 usecols=['user_id', 'product_id', 'rating'],
-                dtype={'user_id': 'category', 'product_id': 'category', 'rating': 'float32'}
+                dtype={'rating': 'float32'}
             )
             print(f"✓ Loaded interactions: {len(interactions_full)} rows")
         except Exception as e:
@@ -105,6 +109,10 @@ class RecommendationEngine:
         else:
             self.interactions_df = interactions_full
             print(f"Full dataset mode: Loaded {len(interactions_full):,} interactions")
+        
+        # Convert to category after sampling to avoid categorical index issues
+        self.interactions_df['user_id'] = self.interactions_df['user_id'].astype('category')
+        self.interactions_df['product_id'] = self.interactions_df['product_id'].astype('category')
 
         # Load mappings
         try:
@@ -176,7 +184,12 @@ class RecommendationEngine:
 
         # Persist a joined DF for quick top-N popular results
         popular_joined = product_stats.merge(self.products_df, on='product_id', how='left')
-        popular_joined['title'] = popular_joined['brand'].fillna('') + ' ' + popular_joined['category'].fillna('')
+        
+        # Convert categorical to string before fillna to avoid category issues
+        brand_str = popular_joined['brand'].astype(str).fillna('')
+        category_str = popular_joined['category'].astype(str).fillna('')
+        popular_joined['title'] = brand_str + ' ' + category_str
+        
         self._popular_products_df = popular_joined[['product_id', 'title', 'category', 'brand', 'price', 'rating_count', 'mean_rating', 'popularity_score']]
 
     def _get_user_interactions_view(self, user_id: str) -> pd.DataFrame:
