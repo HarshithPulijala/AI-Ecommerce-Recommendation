@@ -36,13 +36,20 @@ recommendation_engine = None
 models_status = {
     'loaded': False,
     'error': None,
-    'timestamp': None
+    'timestamp': None,
+    'loading': False
 }
 
 
 def initialize_engine():
     """Initialize the recommendation engine on startup"""
     global recommendation_engine, models_status
+    
+    if models_status['loading'] or models_status['loaded']:
+        return
+    
+    models_status['loading'] = True
+    
     try:
         logger.info("Initializing recommendation engine...")
         recommendation_engine = get_engine()
@@ -52,22 +59,21 @@ def initialize_engine():
         gc.collect()
         
         models_status['loaded'] = True
+        models_status['loading'] = False
         models_status['timestamp'] = datetime.now().isoformat()
         logger.info("✓ Recommendation engine initialized successfully")
     except Exception as e:
         logger.error(f"Failed to initialize recommendation engine: {str(e)}", exc_info=True)
         models_status['loaded'] = False
+        models_status['loading'] = False
         models_status['error'] = str(e)
 
 
-@app.before_first_request
-def startup_initialize():
-    """Load recommendation engine once on first request"""
-    if not models_status['loaded']:
-        try:
-            initialize_engine()
-        except Exception as e:
-            logger.error(f"Startup initialization failed: {str(e)}")
+# Initialize models at module load time (when Gunicorn worker starts)
+try:
+    initialize_engine()
+except Exception as e:
+    logger.warning(f"Initial model loading failed, will retry on first request: {str(e)}")
 
 
 # ==================== API ENDPOINTS ====================
