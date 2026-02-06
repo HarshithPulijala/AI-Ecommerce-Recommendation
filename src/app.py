@@ -56,6 +56,25 @@ def initialize_engine():
     
     try:
         logger.info("Initializing recommendation engine...")
+        
+        # Check if required files exist first
+        required_files = [
+            'data/processed/products_clean.csv',
+            'data/processed/interactions_clean.csv',
+            'models/svd_model.pkl',
+            'models/user_factors.pkl',
+            'models/product_factors.pkl',
+        ]
+        
+        missing_files = [f for f in required_files if not Path(f).exists()]
+        if missing_files:
+            error_msg = f"Missing required files: {', '.join(missing_files)}"
+            logger.warning(error_msg)
+            models_status['loaded'] = False
+            models_status['loading'] = False
+            models_status['error'] = error_msg
+            return
+        
         recommendation_engine = get_engine()
         load_models()
         
@@ -71,7 +90,7 @@ def initialize_engine():
         models_status['loaded'] = False
         models_status['loading'] = False
         models_status['error'] = str(e)
-        _initialization_started = False
+        # Don't reset _initialization_started on first error, so we don't keep retrying
 
 
 def ensure_initialized():
