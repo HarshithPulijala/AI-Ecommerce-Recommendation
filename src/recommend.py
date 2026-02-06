@@ -63,20 +63,38 @@ class RecommendationEngine:
         
         # Check if running on Render (memory-constrained environment)
         is_render = os.environ.get('RENDER') is not None or os.environ.get('RENDER_INSTANCE_ID') is not None
+        
+        print(f"Running on Render: {is_render}")
+        print(f"Processed dir: {processed_dir} (exists: {processed_dir.exists()})")
+        print(f"Models dir: {models_dir} (exists: {models_dir.exists()})")
 
         # Load products with minimal columns and memory-efficient dtypes
-        self.products_df = pd.read_csv(
-            processed_dir / self.config['files']['products_clean'],
-            usecols=['product_id', 'category', 'brand', 'price'],
-            dtype={'product_id': 'category', 'category': 'category', 'brand': 'category', 'price': 'float32'}
-        )
+        try:
+            products_file = processed_dir / self.config['files']['products_clean']
+            print(f"Loading products from: {products_file} (exists: {products_file.exists()})")
+            self.products_df = pd.read_csv(
+                products_file,
+                usecols=['product_id', 'category', 'brand', 'price'],
+                dtype={'product_id': 'category', 'category': 'category', 'brand': 'category', 'price': 'float32'}
+            )
+            print(f"✓ Loaded products: {len(self.products_df)} rows")
+        except Exception as e:
+            print(f"✗ Failed to load products: {e}")
+            raise
         
         # Load interactions with minimal columns
-        interactions_full = pd.read_csv(
-            processed_dir / self.config['files']['interactions_clean'],
-            usecols=['user_id', 'product_id', 'rating'],
-            dtype={'user_id': 'category', 'product_id': 'category', 'rating': 'float32'}
-        )
+        try:
+            interactions_file = processed_dir / self.config['files']['interactions_clean']
+            print(f"Loading interactions from: {interactions_file} (exists: {interactions_file.exists()})")
+            interactions_full = pd.read_csv(
+                interactions_file,
+                usecols=['user_id', 'product_id', 'rating'],
+                dtype={'user_id': 'category', 'product_id': 'category', 'rating': 'float32'}
+            )
+            print(f"✓ Loaded interactions: {len(interactions_full)} rows")
+        except Exception as e:
+            print(f"✗ Failed to load interactions: {e}")
+            raise
         
         # On Render: sample interactions more aggressively to fit memory limit (512 MB)
         if is_render:
@@ -89,10 +107,25 @@ class RecommendationEngine:
             print(f"Full dataset mode: Loaded {len(interactions_full):,} interactions")
 
         # Load mappings
-        with open(models_dir / self.config['files']['user_to_idx'], 'rb') as f:
-            self.user_to_idx = pickle.load(f)
-        with open(models_dir / self.config['files']['product_to_idx'], 'rb') as f:
-            self.product_to_idx = pickle.load(f)
+        try:
+            user_to_idx_file = models_dir / self.config['files']['user_to_idx']
+            print(f"Loading user_to_idx from: {user_to_idx_file} (exists: {user_to_idx_file.exists()})")
+            with open(user_to_idx_file, 'rb') as f:
+                self.user_to_idx = pickle.load(f)
+            print(f"✓ Loaded user_to_idx: {len(self.user_to_idx)} users")
+        except Exception as e:
+            print(f"✗ Failed to load user_to_idx: {e}")
+            raise
+            
+        try:
+            product_to_idx_file = models_dir / self.config['files']['product_to_idx']
+            print(f"Loading product_to_idx from: {product_to_idx_file} (exists: {product_to_idx_file.exists()})")
+            with open(product_to_idx_file, 'rb') as f:
+                self.product_to_idx = pickle.load(f)
+            print(f"✓ Loaded product_to_idx: {len(self.product_to_idx)} products")
+        except Exception as e:
+            print(f"✗ Failed to load product_to_idx: {e}")
+            raise
 
         # Load SVD model
         with open(models_dir / self.config['files']['svd_model'], 'rb') as f:

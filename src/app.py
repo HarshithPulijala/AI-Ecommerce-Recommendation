@@ -105,6 +105,48 @@ def api_health():
     return health_check()
 
 
+@app.route('/api/debug', methods=['GET'])
+def debug_info():
+    """Debug endpoint - shows file existence and model loading status"""
+    from pathlib import Path
+    import os
+    
+    debug_data = {
+        'environment': os.environ.get('RENDER', 'false'),
+        'models_status': models_status,
+        'files': {}
+    }
+    
+    # Check data files
+    data_files = [
+        'data/processed/products_clean.csv',
+        'data/processed/interactions_clean.csv',
+    ]
+    
+    # Check model files
+    model_files = [
+        'models/svd_model.pkl',
+        'models/user_factors.pkl',
+        'models/product_factors.pkl',
+        'models/product_features.pkl',
+        'models/user_to_idx.pkl',
+        'models/product_to_idx.pkl',
+        'models/tfidf_vectorizer.pkl',
+        'models/price_scaler.pkl',
+    ]
+    
+    for filepath in data_files + model_files:
+        p = Path(filepath)
+        exists = p.exists()
+        size = p.stat().st_size if exists else 0
+        debug_data['files'][filepath] = {
+            'exists': exists,
+            'size_mb': round(size / (1024 * 1024), 2) if size > 0 else 0
+        }
+    
+    return jsonify(debug_data)
+
+
 @app.route('/api/recommend', methods=['POST'])
 def get_recommendations():
     """
