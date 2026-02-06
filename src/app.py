@@ -40,14 +40,18 @@ models_status = {
     'loading': False
 }
 
+# Flag to ensure we only load once
+_initialization_started = False
+
 
 def initialize_engine():
-    """Initialize the recommendation engine on startup"""
-    global recommendation_engine, models_status
+    """Initialize the recommendation engine"""
+    global recommendation_engine, models_status, _initialization_started
     
-    if models_status['loading'] or models_status['loaded']:
+    if _initialization_started:
         return
     
+    _initialization_started = True
     models_status['loading'] = True
     
     try:
@@ -67,13 +71,16 @@ def initialize_engine():
         models_status['loaded'] = False
         models_status['loading'] = False
         models_status['error'] = str(e)
+        _initialization_started = False
 
 
-# Initialize models at module load time (when Gunicorn worker starts)
-try:
-    initialize_engine()
-except Exception as e:
-    logger.warning(f"Initial model loading failed, will retry on first request: {str(e)}")
+def ensure_initialized():
+    """Ensure models are initialized, trigger loading if needed"""
+    if not models_status['loaded'] and not models_status['loading']:
+        try:
+            initialize_engine()
+        except Exception as e:
+            logger.error(f"Initialization failed: {str(e)}")
 
 
 # ==================== API ENDPOINTS ====================
@@ -128,6 +135,9 @@ def get_recommendations():
         "processing_time_ms": float
     }
     """
+    # Trigger lazy loading if needed
+    ensure_initialized()
+    
     start_time = datetime.now()
     
     try:
@@ -164,7 +174,8 @@ def get_recommendations():
             return jsonify({
                 'success': False,
                 'error': 'Recommendation engine not ready',
-                'details': models_status['error']
+                'details': models_status['error'],
+                'loading': models_status['loading']
             }), 503
         
         logger.info(f"Generating {top_n} recommendations for user: {user_id}")
@@ -264,6 +275,8 @@ def get_product(product_id):
         }
     }
     """
+    ensure_initialized()
+    
     try:
         if not models_status['loaded'] or recommendation_engine is None:
             return jsonify({
@@ -321,6 +334,8 @@ def get_sample_users():
         "total_available": int
     }
     """
+    ensure_initialized()
+    
     try:
         limit = request.args.get('limit', 5, type=int)
         limit = min(max(limit, 1), 20)  # Clamp between 1 and 20
@@ -370,6 +385,8 @@ def get_sample_users():
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
     """Get system statistics and model information"""
+    ensure_initialized()
+    
     try:
         if not models_status['loaded'] or recommendation_engine is None:
             return jsonify({
